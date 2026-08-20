@@ -1524,6 +1524,13 @@ button.vera-pill[aria-pressed="true"] {
   height: 48px;
 }
 
+.vera-footer__brand {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  text-decoration: none;
+}
+
 /* The footer wordmark stands in for the logo when no logo asset is uploaded, so
    it inherits the footer's own colour instead of the header's cream. */
 .vera-footer .vera-brand-fallback {
@@ -4685,26 +4692,8 @@ body:not([data-builder-edit-mode]) [data-calendly-preview][data-live-runtime] {
   margin: 0;
 }
 
-.vera-account-payment-line {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  margin-top: 24px;
-  border-top: 2px dashed #59628c;
-  padding-top: 18px;
-}
-
 .vera-account-dashboard [data-account-action-required] {
   margin-top: 16px;
-}
-
-.vera-account-dashboard [data-account-balance-payment] {
-  max-width: 720px;
-  margin-top: 22px;
-}
-
-.vera-account-dashboard [data-account-balance-submit] {
-  margin-top: 18px;
 }
 
 .vera-account-cancelled {
@@ -5674,8 +5663,7 @@ body:not([data-builder-edit-mode]) [data-calendly-preview][data-live-runtime] {
     width: 100%;
   }
 
-  .vera-account-section-heading,
-  .vera-account-payment-line {
+  .vera-account-section-heading {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -7135,6 +7123,90 @@ body:not([data-builder-edit-mode]) [data-calendly-preview][data-live-runtime] {
   font-size: 9px;
 }
 
+.ledger-journal__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 36px;
+}
+
+.ledger-journal__entry {
+  position: relative;
+  display: grid;
+  grid-template-rows: 230px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #c3c7bd;
+  border-radius: 28px 28px 6px 6px;
+  background: var(--ledger-paper-bright);
+  color: var(--ledger-ink);
+  text-decoration: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, translate 180ms ease;
+}
+
+.ledger-journal__entry:hover {
+  border-color: var(--ledger-violet);
+  box-shadow: 6px 6px 0 var(--ledger-mint);
+  translate: -2px -2px;
+}
+
+.ledger-journal__number {
+  position: absolute;
+  z-index: 2;
+  top: 16px;
+  left: 16px;
+  padding: 6px 10px;
+  background: var(--ledger-ink);
+  color: var(--ledger-mint);
+  font-family: var(--ledger-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ledger-journal__entry .vera-image {
+  height: 230px;
+  min-height: 230px;
+  border: 0;
+  border-bottom: 1px solid #c3c7bd;
+  border-radius: 0;
+}
+
+.ledger-journal__copy {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 24px 26px;
+}
+
+.ledger-journal__copy > span,
+.ledger-journal__copy > strong {
+  color: #5b6488;
+  font-family: var(--ledger-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ledger-journal__copy h3 {
+  margin: 12px 0 0;
+  font-family: var(--ledger-font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.12;
+}
+
+.ledger-journal__copy p {
+  margin: 12px 0 0;
+  color: var(--ledger-paper-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.ledger-journal__copy > strong {
+  margin-top: auto;
+  padding-top: 22px;
+  color: var(--ledger-violet);
+}
+
 @keyframes ledger-hero-in {
   from { opacity: 0; translate: 0 18px; }
   to { opacity: 1; translate: 0 0; }
@@ -7259,6 +7331,22 @@ body:not([data-builder-edit-mode]) [data-calendly-preview][data-live-runtime] {
     grid-template-columns: 1fr;
   }
 
+  .ledger-journal__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ledger-journal__entry {
+    grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .ledger-journal__entry .vera-image {
+    height: 100%;
+    min-height: 290px;
+    border-right: 1px solid #c3c7bd;
+    border-bottom: 0;
+  }
+
   .ledger-after article {
     max-width: 560px;
   }
@@ -7371,6 +7459,18 @@ body:not([data-builder-edit-mode]) [data-calendly-preview][data-live-runtime] {
   .ledger-after__image {
     height: 230px;
   }
+
+  .ledger-journal__entry {
+    grid-template-columns: 1fr;
+    grid-template-rows: 210px minmax(0, 1fr);
+  }
+
+  .ledger-journal__entry .vera-image {
+    height: 210px;
+    min-height: 210px;
+    border-right: 0;
+    border-bottom: 1px solid #c3c7bd;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -7387,7 +7487,105 @@ body:not([data-builder-edit-mode]) [data-calendly-preview][data-live-runtime] {
 
   .ledger-reading-row,
   .ledger-sitting__steps li,
+  .ledger-journal__entry,
   .ledger-button {
     transition: none;
+  }
+}
+
+/* Keep account access visible beside the mobile menu, with a labelled copy inside the drawer. */
+.vera-header .vera-brand__logo {
+  height: 54px;
+}
+
+.vera-header__account,
+.vera-nav__account {
+  align-items: center;
+  gap: 9px;
+  color: var(--ledger-light-text);
+  font-family: var(--ledger-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.vera-header__account {
+  display: inline-flex;
+  min-height: 42px;
+  border: 1px solid var(--ledger-line);
+  border-radius: 999px;
+  padding: 6px 12px 6px 7px;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.vera-header__account:hover,
+.vera-header__account[aria-current="page"] {
+  border-color: var(--ledger-mint);
+  background: rgb(111 209 168 / 0.1);
+  color: var(--ledger-mint);
+}
+
+.vera-header__account svg,
+.vera-nav__account svg {
+  width: 27px;
+  height: 27px;
+  flex: none;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  padding: 4px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.vera-nav__account {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .vera-header {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 10px;
+  }
+
+  .vera-nav-toggle {
+    grid-column: 2;
+  }
+
+  .vera-header__actions {
+    grid-column: 3;
+    grid-row: 1;
+    display: flex;
+  }
+
+  .vera-header__actions > :not(.vera-header__account) {
+    display: none;
+  }
+
+  .vera-nav a.vera-nav__account {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .vera-header__account {
+    width: 44px;
+    justify-content: center;
+    padding: 6px;
+  }
+
+  .vera-header__account > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
 }

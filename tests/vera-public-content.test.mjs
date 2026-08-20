@@ -23,6 +23,7 @@ test("Midnight Ledger anchors remain the public content defaults", async () => {
   assert.equal(homeSectionsDefaults.reading_1_price, "$240");
   assert.equal(homeSectionsDefaults.sitting_title, "Thirty minutes, in order.");
   assert.equal(homeSectionsDefaults.after_title, "Three things you keep.");
+  assert.equal(homeSectionsDefaults.journal_title, "Notes from the desk.");
   assert.equal(Object.hasOwn(homeSectionsDefaults, "reading_2_title"), false);
   assert.equal(articleDefaults.back_label, "← All writing");
   assert.equal(articleDefaults.read_next_title, "Read next");
@@ -74,10 +75,22 @@ test("generated EmDash types retain every Studio collection and the Ledger home 
     "sitting_step_5_time",
     "reading_featured_label",
     "after_3_alt",
+    "journal_eyebrow",
+    "journal_title",
+    "journal_cta",
   ]) {
     assert.match(homeSection, new RegExp(`\\b${field}\\?: string`));
   }
-  assert.doesNotMatch(homeSection, /reading_2_title|journal_eyebrow|letter_form_legend/);
+  assert.doesNotMatch(homeSection, /reading_2_title|letter_form_legend/);
+});
+
+test("home surfaces the published journal with Ledger-specific cards", () => {
+  const source = read("src/pages/index.astro");
+  assert.match(source, /listBlogPosts\(locale\)/);
+  assert.match(source, /posts\.slice\(0, 3\)/);
+  assert.match(source, /class="ledger-paper-section ledger-journal"/);
+  assert.match(source, /href="\/writing"/);
+  assert.match(source, /class="ledger-journal__entry"/);
 });
 
 test("all canonical public routes mount the Vera frame and editable page content", () => {
@@ -429,6 +442,10 @@ test("account, letters, and forms expose source-faithful integration states", as
   assert.match(account, /\/cancel/);
   assert.match(account, /\/account\/messages/);
   assert.match(account, /\/account\/files\//);
+  assert.doesNotMatch(account, /data-account-payment-(?:paid|balance)/);
+  assert.doesNotMatch(account, /data-account-balance-(?:payment|card|submit|status)/);
+  assert.doesNotMatch(account, /kind: "balance"/);
+  assert.match(account, /numberValue\(booking, "paid_cents", "paidCents"\) > 0/);
   assert.doesNotMatch(account, /<nav class="vera-account-nav"/);
   assert.doesNotMatch(account, /<button[^>]+data-account-nav-button/);
   assert.match(account, /window\.location\.hash\.replace/);
@@ -559,6 +576,17 @@ test("account signup copy opens the room immediately", async () => {
   );
   assert.equal(authDefaults.verification_success_status, "You're in the book");
   assert.equal(authDefaults.verification_invalid_status, "Wrong address? Start over");
+});
+
+test("shared header and footer render the locked raster logo", () => {
+  for (const component of [
+    read("src/components/vera/VeraHeader.astro"),
+    read("src/components/vera/VeraFooter.astro"),
+  ]) {
+    assert.match(component, /data-vera-brand-logo/);
+    assert.match(component, /logo\.webp/);
+    assert.doesNotMatch(component, /logo\.svg/);
+  }
 });
 
 test("Vera typography has no remote font stylesheet", () => {

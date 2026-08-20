@@ -975,6 +975,9 @@ export interface VeraHomeSection {
   after_3_body?: string;
   after_3_when?: string;
   after_3_alt?: string;
+  journal_eyebrow?: string;
+  journal_title?: string;
+  journal_cta?: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;

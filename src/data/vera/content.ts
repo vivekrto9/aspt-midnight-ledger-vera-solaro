@@ -190,6 +190,9 @@ export const homeSectionsDefaults: VeraContent = {
     "Four typed pages, written after Vera has slept on the sitting and read the chart again cold.",
   after_3_when: "Posted within a week",
   after_3_alt: "Reserved image position for the written chart summary",
+  journal_eyebrow: "The journal",
+  journal_title: "Notes from the desk.",
+  journal_cta: "All writing",
 };
 
 export const readingsDefaults: VeraContent = {

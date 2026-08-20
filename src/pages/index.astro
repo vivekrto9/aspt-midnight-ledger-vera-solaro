@@ -2,6 +2,7 @@
 import { loadPublicPageContent } from "../builder/public-page.ts";
 import VeraFrame from "../components/vera/VeraFrame.astro";
 import VeraImage from "../components/vera/VeraImage.astro";
+import { blogImageAt, getBlogLocale, listBlogPosts } from "../data/blog-posts.ts";
 import { isOfferedReading } from "../data/vera/offered-readings.ts";
 
 export const prerender = false;
@@ -16,6 +17,12 @@ const deliverables = [1, 2, 3];
 const offeredReadings = [{ index: 1, slug: "natal-hour" }].filter(({ index }) =>
   isOfferedReading(index),
 );
+const locale = getBlogLocale(Astro.request.url);
+const { posts } = await listBlogPosts(locale);
+const journal = posts.slice(0, 3).map((post, index) => {
+  const image = blogImageAt(post, index);
+  return { ...post, src: image.src, imageAlt: image.alt };
+});
 
 const accentPhrase = "a note";
 const accentAt = content.hero_title.toLowerCase().indexOf(accentPhrase);
@@ -189,6 +196,32 @@ const heroTitle = accentAt >= 0
       ))}
     </div>
   </section>
+
+  {journal.length > 0 ? (
+    <section class="ledger-paper-section ledger-journal" id="journal" data-ledger-reveal>
+      <header class="ledger-section-head">
+        <div>
+          <p {...builderEdit("journal_eyebrow")}>{content.journal_eyebrow}</p>
+          <h2 {...builderEdit("journal_title")}>{content.journal_title}</h2>
+        </div>
+        <a class="ledger-button ledger-button--solid" href="/writing" {...builderEdit("journal_cta")}>{content.journal_cta}</a>
+      </header>
+      <div class="ledger-journal__grid">
+        {journal.map((item, index) => (
+          <a class="ledger-journal__entry" href={item.href}>
+            <span class="ledger-journal__number">Entry {String(index + 1).padStart(2, "0")}</span>
+            <VeraImage src={item.src} alt={item.imageAlt} />
+            <div class="ledger-journal__copy">
+              <span>{item.meta}</span>
+              <h3>{item.title}</h3>
+              <p>{item.excerpt}</p>
+              <strong>Read the entry →</strong>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  ) : null}
 </VeraFrame>
 
 <script>
