@@ -1,0 +1,209 @@
+---
+import { loadPublicPageContent } from "../builder/public-page.ts";
+import VeraFrame from "../components/vera/VeraFrame.astro";
+import VeraImage from "../components/vera/VeraImage.astro";
+import { isOfferedReading } from "../data/vera/offered-readings.ts";
+
+export const prerender = false;
+
+const page = await loadPublicPageContent(Astro, "home");
+const { content, builderEdit } = page;
+
+const ledgerRows = [1, 2, 3];
+const stats = [1, 2, 3, 4];
+const sittingSteps = [1, 2, 3, 4, 5];
+const deliverables = [1, 2, 3];
+const offeredReadings = [{ index: 1, slug: "natal-hour" }].filter(({ index }) =>
+  isOfferedReading(index),
+);
+
+const accentPhrase = "a note";
+const accentAt = content.hero_title.toLowerCase().indexOf(accentPhrase);
+const heroTitle = accentAt >= 0
+  ? {
+      before: content.hero_title.slice(0, accentAt),
+      accent: content.hero_title.slice(accentAt, accentAt + accentPhrase.length),
+      after: content.hero_title.slice(accentAt + accentPhrase.length),
+    }
+  : null;
+---
+
+<VeraFrame {...page} currentPath="/">
+  <section class="ledger-hero" aria-labelledby="ledger-home-title">
+    <div class="ledger-hero__stars" aria-hidden="true"></div>
+    <div class="ledger-hero__rays" aria-hidden="true"></div>
+    <div class="ledger-hero__arcs" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <p class="ledger-hero__location" {...builderEdit("hero_location")}>{content.hero_location}</p>
+
+    <div class="ledger-hero__stamp" aria-label={`${content.hero_stamp_eyebrow} ${content.hero_stamp_year} ${content.hero_stamp_note}`}>
+      <span {...builderEdit("hero_stamp_eyebrow")}>{content.hero_stamp_eyebrow}</span>
+      <strong {...builderEdit("hero_stamp_year")}>{content.hero_stamp_year}</strong>
+      <span {...builderEdit("hero_stamp_note")}>{content.hero_stamp_note}</span>
+    </div>
+
+    <div class="ledger-hero__content">
+      <p class="ledger-rule-label" {...builderEdit("hero_kicker")}>
+        <span aria-hidden="true"></span>{content.hero_kicker}<span aria-hidden="true"></span>
+      </p>
+      <h1 id="ledger-home-title" {...builderEdit("hero_title")}>
+        {heroTitle ? <>{heroTitle.before}<em>{heroTitle.accent}</em>{heroTitle.after}</> : content.hero_title}
+      </h1>
+      <p class="ledger-hero__body" {...builderEdit("hero_body")}>{content.hero_body}</p>
+      <div class="ledger-hero__actions">
+        <a class="ledger-button ledger-button--solid" href="/booking" {...builderEdit("hero_primary_cta")}>
+          {content.hero_primary_cta}
+        </a>
+        <a class="ledger-button ledger-button--outline" href="/about" {...builderEdit("hero_secondary_cta")}>
+          {content.hero_secondary_cta}
+        </a>
+      </div>
+    </div>
+
+    <div class="ledger-register ledger-register--hero" data-ledger-reveal>
+      <div class="ledger-register__head">
+        <span {...builderEdit("ledger_date_heading")}>{content.ledger_date_heading}</span>
+        <span {...builderEdit("ledger_event_heading")}>{content.ledger_event_heading}</span>
+        <span {...builderEdit("ledger_note_heading")}>{content.ledger_note_heading}</span>
+        <span {...builderEdit("ledger_status_heading")}>{content.ledger_status_heading}</span>
+      </div>
+      {ledgerRows.map((index) => (
+        <div class="ledger-register__row">
+          <span {...builderEdit(`ledger_${index}_date`)}>{content[`ledger_${index}_date`]}</span>
+          <strong {...builderEdit(`ledger_${index}_event`)}>{content[`ledger_${index}_event`]}</strong>
+          <p {...builderEdit(`ledger_${index}_note`)}>{content[`ledger_${index}_note`]}</p>
+          <span {...builderEdit(`ledger_${index}_status`)}>{content[`ledger_${index}_status`]}</span>
+        </div>
+      ))}
+    </div>
+
+    <div class="ledger-hero__stats" data-ledger-reveal>
+      {stats.map((index) => (
+        <span>
+          <strong {...builderEdit(`hero_stat_${index}_value`)}>{content[`hero_stat_${index}_value`]}</strong>
+          <small {...builderEdit(`hero_stat_${index}_label`)}>{content[`hero_stat_${index}_label`]}</small>
+        </span>
+      ))}
+    </div>
+  </section>
+
+  <div class="ledger-ticker" aria-label={content.ticker_1}>
+    {[1, 2, 3, 4].map((index) => (
+      <>{index > 1 ? <i aria-hidden="true">✦</i> : null}<span {...builderEdit(`ticker_${index}`)}>{content[`ticker_${index}`]}</span></>
+    ))}
+  </div>
+
+  <section class="ledger-paper-section ledger-readings" id="readings" data-ledger-reveal>
+    <header class="ledger-section-head">
+      <div>
+        <p {...builderEdit("readings_eyebrow")}>{content.readings_eyebrow}</p>
+        <h2 {...builderEdit("readings_title")}>{content.readings_title}</h2>
+      </div>
+      <p {...builderEdit("readings_intro")}>{content.readings_intro}</p>
+    </header>
+
+    <div class="ledger-reading-list">
+      {offeredReadings.map(({ index, slug }) => (
+        <article class="ledger-reading-row ledger-reading-row--featured">
+          <span class="ledger-reading-row__number">{String(index).padStart(2, "0")}</span>
+          <div class="ledger-reading-row__copy">
+            <div>
+              <h3 {...builderEdit(`reading_${index}_title`)}>{content[`reading_${index}_title`]}</h3>
+              <span {...builderEdit("reading_featured_label")}>{content.reading_featured_label}</span>
+            </div>
+            <p {...builderEdit(`reading_${index}_body`)}>{content[`reading_${index}_body`]}</p>
+          </div>
+          <ul>
+            {[1, 2, 3].map((item) => (
+              <li {...builderEdit(`reading_${index}_include_${item}`)}>{content[`reading_${index}_include_${item}`]}</li>
+            ))}
+          </ul>
+          <p class="ledger-reading-row__meta" {...builderEdit(`reading_${index}_meta`)}>{content[`reading_${index}_meta`]}</p>
+          <div class="ledger-reading-row__action">
+            <strong {...builderEdit(`reading_${index}_price`)}>{content[`reading_${index}_price`]}</strong>
+            <a class="ledger-button ledger-button--solid" href={`/readings/${slug}`} {...builderEdit(`reading_${index}_cta`)}>
+              {content[`reading_${index}_cta`]}
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="ledger-night-section ledger-sitting" data-ledger-reveal>
+    <header class="ledger-section-head ledger-section-head--dark">
+      <div>
+        <p {...builderEdit("sitting_eyebrow")}>{content.sitting_eyebrow}</p>
+        <h2 {...builderEdit("sitting_title")}>{content.sitting_title}</h2>
+      </div>
+      <p {...builderEdit("sitting_intro")}>{content.sitting_intro}</p>
+    </header>
+    <ol class="ledger-sitting__steps">
+      {sittingSteps.map((index) => (
+        <li>
+          <span {...builderEdit(`sitting_step_${index}_time`)}>{content[`sitting_step_${index}_time`]}</span>
+          <h3 {...builderEdit(`sitting_step_${index}_title`)}>{content[`sitting_step_${index}_title`]}</h3>
+          <p {...builderEdit(`sitting_step_${index}_note`)}>{content[`sitting_step_${index}_note`]}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="ledger-sitting__footer">
+      {[1, 2, 3].map((index) => (
+        <span {...builderEdit(`sitting_footer_${index}`)}>{content[`sitting_footer_${index}`]}</span>
+      ))}
+    </div>
+  </section>
+
+  <section class="ledger-quote" data-ledger-reveal>
+    <span aria-hidden="true">“</span>
+    <blockquote {...builderEdit("testimonial_1")}>{content.testimonial_1}</blockquote>
+    <p {...builderEdit("testimonial_1_byline")}>{content.testimonial_1_byline}</p>
+    <div>
+      <span {...builderEdit("ledger_eyebrow")}>{content.ledger_eyebrow}</span>
+      <i aria-hidden="true">✦</i>
+      <span {...builderEdit("ledger_note")}>{content.ledger_note}</span>
+    </div>
+  </section>
+
+  <section class="ledger-night-section ledger-after" data-ledger-reveal>
+    <header class="ledger-section-head ledger-section-head--dark">
+      <div>
+        <p {...builderEdit("after_eyebrow")}>{content.after_eyebrow}</p>
+        <h2 {...builderEdit("after_title")}>{content.after_title}</h2>
+      </div>
+      <p {...builderEdit("after_note")}>{content.after_note}</p>
+    </header>
+    <div class="ledger-after__grid">
+      {deliverables.map((index) => (
+        <article>
+          <div class="ledger-after__image">
+            <VeraImage alt={content[`after_${index}_alt`]} altField={`after_${index}_alt`} edit={builderEdit} />
+          </div>
+          <div class="ledger-after__title">
+            <span>{String(index).padStart(2, "0")}</span>
+            <h3 {...builderEdit(`after_${index}_title`)}>{content[`after_${index}_title`]}</h3>
+          </div>
+          <p {...builderEdit(`after_${index}_body`)}>{content[`after_${index}_body`]}</p>
+          <small {...builderEdit(`after_${index}_when`)}>{content[`after_${index}_when`]}</small>
+        </article>
+      ))}
+    </div>
+  </section>
+</VeraFrame>
+
+<script>
+  const reveals = document.querySelectorAll<HTMLElement>("[data-ledger-reveal]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    reveals.forEach((node) => node.dataset.visible = "true");
+  } else {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        (entry.target as HTMLElement).dataset.visible = "true";
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach((node) => observer.observe(node));
+  }
+</script>

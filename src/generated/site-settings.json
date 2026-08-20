@@ -1,0 +1,19 @@
+{
+  "siteSettings": {
+    "brandName": "Vera Solaro",
+    "siteUrl": "",
+    "primaryColor": "#B0A2FF",
+    "contactEmail": "vera@verasolaro.it",
+    "defaultLocale": "en",
+    "currency": "USD",
+    "timezone": "Europe/Rome",
+    "seoTitle": "Vera Solaro",
+    "seoDescription": "Birth charts, transits and the long slow turns of a life — read by hand in one attentive sitting.",
+    "navigationMode": "multi-page",
+    "tone": "midnight-ledger",
+    "typography": "editorial",
+    "buttonStyle": "pill",
+    "enableAnnouncementBanner": false,
+    "announcementText": ""
+  }
+}
