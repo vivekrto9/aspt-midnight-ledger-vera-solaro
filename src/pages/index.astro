@@ -4,6 +4,8 @@ import VeraFrame from "../components/vera/VeraFrame.astro";
 import VeraImage from "../components/vera/VeraImage.astro";
 import { blogImageAt, getBlogLocale, listBlogPosts } from "../data/blog-posts.ts";
 import { isOfferedReading } from "../data/vera/offered-readings.ts";
+import { listVeraCatalog } from "../server/vera/catalog.ts";
+import { getVeraEnv } from "../server/vera/http.ts";
 
 export const prerender = false;
 
@@ -19,6 +21,14 @@ const offeredReadings = [{ index: 1, slug: "natal-hour" }].filter(({ index }) =>
 );
 const locale = getBlogLocale(Astro.request.url);
 const { posts } = await listBlogPosts(locale);
+const catalog = await listVeraCatalog(await getVeraEnv(Astro as never));
+const money = (slug: string) => {
+  const service = catalog.services.find((entry) => entry.slug === slug);
+  if (!service) return "Unavailable";
+  return new Intl.NumberFormat(service.currency === "INR" ? "en-IN" : "en-US", {
+    style: "currency", currency: service.currency, maximumFractionDigits: 2,
+  }).format(service.priceCents / 100);
+};
 const journal = posts.slice(0, 3).map((post, index) => {
   const image = blogImageAt(post, index);
   return { ...post, src: image.src, imageAlt: image.alt };
@@ -127,7 +137,7 @@ const heroTitle = accentAt >= 0
           </ul>
           <p class="ledger-reading-row__meta" {...builderEdit(`reading_${index}_meta`)}>{content[`reading_${index}_meta`]}</p>
           <div class="ledger-reading-row__action">
-            <strong {...builderEdit(`reading_${index}_price`)}>{content[`reading_${index}_price`]}</strong>
+            <strong>{money(slug)}</strong>
             <a class="ledger-button ledger-button--solid" href={`/readings/${slug}`} {...builderEdit(`reading_${index}_cta`)}>
               {content[`reading_${index}_cta`]}
             </a>
